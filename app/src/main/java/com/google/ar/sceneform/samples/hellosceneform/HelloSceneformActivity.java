@@ -77,22 +77,8 @@ public class HelloSceneformActivity extends AppCompatActivity {
         });
   }
 
-  /**
-   * Returns false and displays an error message if Sceneform can not run, true if Sceneform can run
-   * on this device.
-   *
-   * <p>Sceneform requires Android N on the device as well as OpenGL 3.0 capabilities.
-   *
-   * <p>Finishes the activity if Sceneform can not run
-   */
   public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
-    if (Build.VERSION.SDK_INT < VERSION_CODES.N) {
-      Log.e(TAG, "Sceneform requires Android N or later");
-      Toast.makeText(activity, "Sceneform requires Android N or later", Toast.LENGTH_LONG).show();
-      activity.finish();
-      return false;
-    }
-    String openGlVersionString =
+      String openGlVersionString =
         ((ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE))
             .getDeviceConfigurationInfo()
             .getGlEsVersion();
