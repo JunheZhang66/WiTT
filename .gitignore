@@ -3,8 +3,8 @@
 .idea/
 #
 # # Gradle configuration.
-#.gradle/
-#build/
+.gradle/
+build/
 #
 # # User configuration.
 local.properties
