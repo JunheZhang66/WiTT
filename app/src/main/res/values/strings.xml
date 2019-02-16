@@ -16,4 +16,5 @@
 -->
 <resources>
     <string name="app_name">Hello Sceneform</string>
+    <string name="API_KEY">AIzaSyB6Q-qwrvS_nVXSde8X6WCBcQl9uM4Y8TQ</string>
 </resources>

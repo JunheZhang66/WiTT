@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     setContentView(R.layout.activity_ux);
     arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+    CloudTranslateAPI ct = new CloudTranslateAPI();
+    System.out.println(ct.translate("English", "Spanish", "Friend"));
 
     // When you build a Renderable, Sceneform loads its resources in the background while returning
     // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
