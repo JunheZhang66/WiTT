@@ -1,0 +1,14 @@
+{
+    "sxc": {
+        "awscloudformation": {
+            "AuthRoleName": "witt-20190215201012-authRole",
+            "UnauthRoleArn": "arn:aws:iam::092363506738:role/witt-20190215201012-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::092363506738:role/witt-20190215201012-authRole",
+            "Region": "us-east-2",
+            "DeploymentBucketName": "witt-20190215201012-deployment",
+            "UnauthRoleName": "witt-20190215201012-unauthRole",
+            "StackName": "witt-20190215201012",
+            "StackId": "arn:aws:cloudformation:us-east-2:092363506738:stack/witt-20190215201012/6c923d20-3187-11e9-b5d4-0ab3f1b1cb5a"
+        }
+    }
+}
