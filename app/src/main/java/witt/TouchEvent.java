@@ -1,27 +1,27 @@
 package witt;
 
+import android.graphics.Bitmap;
+
 import com.google.ar.sceneform.ArSceneView;
 
 public class TouchEvent {
 
-    private byte[] image;
-    private ArSceneView view;
+    private Bitmap image;
     private float x;
     private float y;
+    private float screenX;
+    private float screenY;
 
-    public TouchEvent(byte[] image, ArSceneView view, float x, float y) {
+    public TouchEvent(Bitmap image, float x, float y, float screenX, float screenY) {
         this.image = image;
-        this.view = view;
+        this.screenX = screenX;
+        this.screenY = screenY;
         this.x = x;
         this.y = y;
     }
 
-    public byte[] getImage() {
+    public Bitmap getImage() {
         return image;
-    }
-
-    public ArSceneView getView() {
-        return view;
     }
 
     public float getX() {
@@ -30,5 +30,13 @@ public class TouchEvent {
 
     public float getY() {
         return y;
+    }
+
+    public float getScreenX() {
+        return screenX;
+    }
+
+    public float getScreenY() {
+        return screenY;
     }
 }

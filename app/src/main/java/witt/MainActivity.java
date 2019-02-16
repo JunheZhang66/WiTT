@@ -130,10 +130,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private TouchEvent generateTouchEvent(Bitmap bitmap, float x, float y) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-        byte[] bitmapdata = bos.toByteArray();
-        return new TouchEvent(bitmapdata, arFragment.getArSceneView(), x, y);
+        return new TouchEvent(bitmap, x, y, 1080, 1920);
     }
 
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
@@ -157,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         protected String[] doInBackground(TouchEvent... objects) {
             TouchEvent event = objects[0];
             Log.d("vision!", "hello");
-            String out = vision.noteImage(event);
+            String out = vision.processImage(event);
             Log.d("vision!", out);
             //send image to vision
             //    receive word (english)
