@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.Toast;
+
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
@@ -28,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
   private ArFragment arFragment;
   private ModelRenderable andyRenderable;
 
+  private AWSAppSyncClient AWSSyncClient;
+
   @Override
   @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
   // CompletableFuture requires api level 24
@@ -40,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     setContentView(R.layout.activity_ux);
+
+    AWSSyncClient = AWSAppSyncClient.builder()
+            .context(getApplicationContext())
+            .awsConfiguration(new AWSConfiguration(getApplicationContext()))
+            .build();
+
     arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
     // When you build a Renderable, Sceneform loads its resources in the background while returning
