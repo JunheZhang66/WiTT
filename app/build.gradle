@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 apply plugin: 'com.android.application'
+apply plugin: 'com.amazonaws.appsync'
 
 android {
     compileSdkVersion 28
@@ -55,6 +56,13 @@ dependencies {
     compile 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0'
     compile 'com.google.code.findbugs:jsr305:2.0.1'
     compile 'com.google.cloud:google-cloud-translate:1.59.0'
+
+    //Base SDK
+    implementation 'com.amazonaws:aws-android-sdk-core:2.12.+'
+    //AppSync SDK
+    implementation 'com.amazonaws:aws-android-sdk-appsync:2.7.+'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 }
 
 apply plugin: 'com.google.ar.sceneform.plugin'
