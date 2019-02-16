@@ -13,17 +13,15 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.PixelCopy;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.ar.core.Anchor;
-import com.google.ar.core.HitResult;
-import com.google.ar.core.Plane;
-import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.ArSceneView;
-import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.samples.hellosceneform.R;
 import com.google.ar.sceneform.ux.ArFragment;
-import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.io.ByteArrayOutputStream;
 
@@ -35,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
     private ArFragment arFragment;
-    private ModelRenderable andyRenderable;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -53,45 +50,15 @@ public class MainActivity extends AppCompatActivity {
         if (arFragment != null) {
             arFragment.getPlaneDiscoveryController().hide();
             arFragment.getPlaneDiscoveryController().setInstructionView(null);
+            arFragment.getArSceneView().getPlaneRenderer().setEnabled(false);
         }
-        arFragment.getArSceneView().getPlaneRenderer().setEnabled(false);
-
-        // When you build a Renderable, Sceneform loads its resources in the background while returning
-        // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
-        ModelRenderable.builder()
-                .setSource(this, R.raw.andy)
-                .build()
-                .thenAccept(renderable -> andyRenderable = renderable)
-                .exceptionally(
-                        throwable -> {
-                            Toast toast =
-                                    Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.show();
-                            return null;
-                        });
-
-        arFragment.setOnTapArPlaneListener(
-                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (andyRenderable == null) {
-                        return;
-                    }
-
-                    // Create the Anchor.
-                    Anchor anchor = hitResult.createAnchor();
-                    AnchorNode anchorNode = new AnchorNode(anchor);
-                    anchorNode.setParent(arFragment.getArSceneView().getScene());
-
-                    // Create the transformable andy and add it to the anchor.
-                    TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
-                    andy.setParent(anchorNode);
-                    andy.setRenderable(andyRenderable);
-                    andy.select();
-                });
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        // Testing
+        showBlackBox();
+
         float x = event.getX();
         float y = event.getY();
 
@@ -100,6 +67,30 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(event);
     }
+
+    private void showBlackBox() {
+        Log.d("Touch Me", "Stop touching me dude");
+        ViewRenderable.builder()
+                .setView(this, R.layout.black)
+                .build()
+                .thenAccept(viewRenderable -> {
+                    Node node = new Node();
+                    node.setRenderable(viewRenderable);
+                    node.setParent(arScene());
+                }).exceptionally(
+                throwable -> {
+                    Toast toast =
+                            Toast.makeText(this, "Unable to load black box", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    return null;
+                });
+    }
+
+    private Scene arScene() {
+        return arFragment.getArSceneView().getScene();
+    }
+
 
     private void takePhoto(float x, float y) {
         ArSceneView view = arFragment.getArSceneView();
