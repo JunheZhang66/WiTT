@@ -16,9 +16,13 @@ import android.view.PixelCopy;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.ar.core.Pose;
+import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.math.Quaternion;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.samples.hellosceneform.R;
 import com.google.ar.sceneform.ux.ArFragment;
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
     private ArFragment arFragment;
+
+    boolean hasBox;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -57,32 +63,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         // Testing
-        showBlackBox();
-
         float x = event.getX();
         float y = event.getY();
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            takePhoto(x, y);
+            //takePhoto(x, y);
+            showBlackBox();
         }
         return super.dispatchTouchEvent(event);
     }
 
     private void showBlackBox() {
         Log.d("Touch Me", "Stop touching me dude");
+
         ViewRenderable.builder()
-                .setView(this, R.layout.black)
+                .setView(this, R.layout.text)
                 .build()
                 .thenAccept(viewRenderable -> {
+                    Vector3 forward = arScene().getCamera().getForward();
+                    Quaternion rotation = arScene().getCamera().getLocalRotation();
+                    float[] pos = {forward.x, forward.y, -0.25f};
+                    float[] rot = {rotation.x,rotation.y,rotation.z,rotation.w};
+                    AnchorNode anchor = new AnchorNode(arFragment.getArSceneView().getSession().createAnchor(new Pose(pos, rot)));
+                    Log.d("Touch Me", "hi");
                     Node node = new Node();
                     node.setRenderable(viewRenderable);
-                    node.setParent(arScene());
+                    anchor.setParent(arScene());
+                    node.setParent(anchor);
                 }).exceptionally(
                 throwable -> {
-                    Toast toast =
-                            Toast.makeText(this, "Unable to load black box", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
+                    Log.d("Touch Me", "oops");
                     return null;
                 });
     }
