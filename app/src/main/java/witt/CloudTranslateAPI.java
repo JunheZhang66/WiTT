@@ -1,4 +1,7 @@
 package witt;
+
+import android.os.AsyncTask;
+
 import com.google.cloud.translate.Language;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.Translate.TranslateOption;
@@ -19,22 +22,26 @@ public class CloudTranslateAPI {
             "fa", "pl", "pt", "ro", "ru", "sr", "st", "si", "sk", "sl", "so", "es", "su",
             "sw", "sv", "tg", "ta", "te", "th", "tr", "uk", "ur", "uz", "vi", "cy", "yi", "yo", "zu"
     };*/
+    private Translate trans;
+    private Map<String, String> all;
 
-    Translate trans = TranslateOptions.getDefaultInstance().getService();
-    List <Language> languages = trans.listSupportedLanguages();
-    Map<String,String> all = new HashMap<>();
-    public CloudTranslateAPI(){
-        for(Language language : languages){
-            all.put(language.getName(),language.getCode());
-        }
-    }
-    public String translate(String lang1, String lang2, String text){
-        Translation translation = trans.translate(text, TranslateOption.sourceLanguage(all.get(lang1)),TranslateOption.targetLanguage(all.get(lang2)));
+    public String translate(String lang1, String lang2, String text) {
+        Translation translation = trans.translate(text, TranslateOption.sourceLanguage(all.get(lang1)), TranslateOption.targetLanguage(all.get(lang2)));
         String fin = translation.getTranslatedText();
         return fin;
     }
-    public String translate(String language, String text){
-        String last = translate("English",language,text);
+
+    public String translate(String language, String text) {
+        String last = translate("English", language, text);
         return last;
+    }
+
+    public void setTranslateObject() {
+        this.trans = TranslateOptions.getDefaultInstance().getService();
+        List<Language> languages = trans.listSupportedLanguages();
+        all = new HashMap<>();
+        for (Language language : languages) {
+            all.put(language.getName(), language.getCode());
+        }
     }
 }
