@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
             .context(getApplicationContext())
             .awsConfiguration(new AWSConfiguration(getApplicationContext()))
             .build();
+    DynamoDbAPI dynamoDB = new DynamoDbAPI(AWSSyncClient);
+    dynamoDB.runMutation();
 
     arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
