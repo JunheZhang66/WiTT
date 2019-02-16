@@ -1,24 +1,39 @@
 package witt;
 
-import com.amazonaws.amplify.generated.graphql.CreateTodoMutation;
-import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient;
 
-import type.CreateTodoInput;
+import android.util.Log;
+
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 
 public class DynamoDbAPI {
 
-    AWSAppSyncClient client;
+    DynamoDBMapper client;
 
-    public DynamoDbAPI(AWSAppSyncClient client) {
+    public DynamoDbAPI(DynamoDBMapper client) {
         this.client = client;
     }
 
-    public void runMutation(){
-        CreateTodoInput createTodoInput = CreateTodoInput.builder()
-                .text("hello")
-                .translation("world")
-                .build();
-        client.mutate(CreateTodoMutation.builder()
-        .input(createTodoInput).build());
+    public void createItem(String language, String text, String translation) {
+        final SpanishDO spanishItem = new SpanishDO();
+        spanishItem.setText(text);
+        spanishItem.setTranslation(translation);
+        DynamoDBMapper d = this.client;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                d.save(spanishItem);
+            }
+        }).start();
+    }
+
+    public void readItem(String language, String text) {
+        DynamoDBMapper d = this.client;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SpanishDO spanishItem = d.load(SpanishDO.class, text);
+                Log.d("GOT ITEM", spanishItem.getTranslation());
+            }
+        }).start();
     }
 }

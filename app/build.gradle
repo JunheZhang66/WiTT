@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 apply plugin: 'com.android.application'
-apply plugin: 'com.amazonaws.appsync'
+//apply plugin: 'com.amazonaws.appsync'
 
 android {
     compileSdkVersion 28
@@ -38,6 +38,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/INDEX.LIST'
+    }
 }
 
 dependencies {
@@ -52,17 +60,19 @@ dependencies {
     //implementation "com.google.ar.sceneform:core:1.7.0"
 
     implementation "com.android.support:appcompat-v7:28.0.0"
-    compile 'com.google.api-client:google-api-client-android:1.22.0'
-    compile 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0'
-    compile 'com.google.code.findbugs:jsr305:2.0.1'
-    compile 'com.google.cloud:google-cloud-translate:1.59.0'
+    implementation 'com.google.api-client:google-api-client-android:1.22.0'
+    implementation 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.google.cloud:google-cloud-translate:1.59.0'
 
     //Base SDK
-    implementation 'com.amazonaws:aws-android-sdk-core:2.12.+'
+    //implementation 'com.amazonaws:aws-android-sdk-core:2.12.+'
     //AppSync SDK
-    implementation 'com.amazonaws:aws-android-sdk-appsync:2.7.+'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    //implementation 'com.amazonaws:aws-android-sdk-appsync:2.7.+'
+    implementation ('com.amazonaws:aws-android-sdk-mobile-client:2.7.+@aar') { transitive = true }
+    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.7.+'
 }
 
 apply plugin: 'com.google.ar.sceneform.plugin'
