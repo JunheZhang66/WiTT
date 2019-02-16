@@ -1,25 +1,20 @@
 package witt;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.PixelCopy;
-import android.view.SurfaceView;
 import android.widget.Toast;
+
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
@@ -29,14 +24,8 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.samples.hellosceneform.R;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import android.support.design.widget.Snackbar;
+import java.io.ByteArrayOutputStream;
 
 
 /**
@@ -45,14 +34,8 @@ import android.support.design.widget.Snackbar;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
-    private static SurfaceView mSurfaceView;
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
-
-    private static final String REQUIRED_PERMISSIONS[] = {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA
-    };
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -113,12 +96,12 @@ public class MainActivity extends AppCompatActivity {
         float y = event.getY();
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            takePhoto();
+            takePhoto(x, y);
         }
         return super.dispatchTouchEvent(event);
     }
 
-    private void takePhoto() {
+    private void takePhoto(float x, float y) {
         ArSceneView view = arFragment.getArSceneView();
 
         // Create a bitmap the size of the scene view.
@@ -131,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
         // Make the request to copy.
         PixelCopy.request(view, bitmap, (copyResult) -> {
             if (copyResult == PixelCopy.SUCCESS) {
-                return; //make bitmap stream and send to vision
+                TouchEvent te = generateTouchEvent(bitmap, x, y);
+                new TapTask().execute(te);
             } else {
                 Toast toast = Toast.makeText(MainActivity.this,
                         "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG);
@@ -139,6 +123,13 @@ public class MainActivity extends AppCompatActivity {
             }
             handlerThread.quitSafely();
         }, new Handler(handlerThread.getLooper()));
+    }
+
+    private TouchEvent generateTouchEvent(Bitmap bitmap, float x, float y) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+        byte[] bitmapdata = bos.toByteArray();
+        return new TouchEvent(bitmapdata, arFragment.getArSceneView(), x, y);
     }
 
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
@@ -156,17 +147,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private class TapTask extends AsyncTask<Object, Void, String[]> {
+    private class TapTask extends AsyncTask<TouchEvent, Void, String[]> {
 
         @Override
-        protected String[] doInBackground(Object... objects) {
-            //(pass in an object containing screenshot and coords)
+        protected String[] doInBackground(TouchEvent... objects) {
+            TouchEvent event = objects[0];
             //send image to vision
             //    receive word (english)
             //send word to translate or dynamodb
             //    receive translated word(s)
             //return word in lang1 and lang2
-            return new String[2];
+            return new String[]{"string1", "string2"};
         }
     }
 }
