@@ -202,20 +202,18 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-    return true;
-  }
 
-  private class TapTask extends AsyncTask<Object, Void, String[]> {
+    private class TapTask extends AsyncTask<Object, Void, String[]> {
 
-      @Override
-      protected String[] doInBackground(Object... objects) {
-          //(pass in an object containing screenshot and coords)
-          //send image to vision
-          //    receive word (english)
-          //send word to translate or dynamodb
-          //    receive translated word(s)
-          //return word in lang1 and lang2
-          return new String[2];
-      }
-  }
+        @Override
+        protected String[] doInBackground(Object... objects) {
+            //(pass in an object containing screenshot and coords)
+            //send image to vision
+            //    receive word (english)
+            //send word to translate or dynamodb
+            //    receive translated word(s)
+            //return word in lang1 and lang2
+            return new String[2];
+        }
+    }
 }
