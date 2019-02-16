@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "witt-231902",
+  "private_key_id": "f18ecb71181ae991a38f38dc202cbeb020301b1b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9EE5NBEdENSyB\nv8hoT3FNL9645mX24GbiMOYPx18i+1idjRO31J3Q7ETiHk46InaZ/07l2Rtlyf8W\naag0pD9As+cUh/BUppw6JAbr1ukh3jMGCYTI1tRKOnjx/2CGIxxiW9i7o7cGSEjD\nl46W2yhr5hHe4pkyPmBU1BjrqM8+b+cigHrAv8aozJ1/xeoEHfgU+ceSa7ruMqcw\nLeiOAoyKWeQ71+268F0vXLYa6HyNR9CX3FTsHUwdB7k/UiMKs4Ro4IBwI+0zkAkj\n+SF2UAoPLbrFHtm3VvgwP59HmvCa81rvzn11ZHT75qMswM68mDQRRfyWf9o3rDOl\n0O+r9bSNAgMBAAECggEAEqz8axev2YE+KP/ykjk8ujDvGYkqy9D9YL0PUMIzN9+n\nsIJ5zugqAbQBFuwC8rOqTwp89u/0CKFEOSjNNIv/8oqC2lCWUSpXFtgttdi4FUAf\nfqpsizFLbZyqi08ccAuiV2X2ugxRPUXhKC79pxG1g7kJjWCJXQDz35VG8+psNGDK\nCcuWLSfndcx1/KGyAEmTdHSLBv9G3oc5ICTTYqAl9kpv4n6mJXnV8kr8XNjaqepV\nMQF2+Q/BMogdDPxah0zJFRR8ndzz888EX/+ai5PD+pYDkRQltSBenRIBQw3D4jsU\nofa1nJalZO/Y6u1jcwG3xU23E7GtNWvTeb+vjT0jaQKBgQD9KMnL4UAjV87iVKiw\nWJPxmimLtWDm3YpnkElAMjKyVNXaANgRL3K4saFoRs0beLer0tQ3XTLBvmgt66kc\nLPpHosTiV38+PmjY71hppwcMyuUvGG8kdCSo1PMdxourJ95MWLXSSIQA77Ef7lt1\nr3AevnT197agbWgax2i1hgnz9QKBgQC/L2ZjtaC7YYYWoXkU2uFrJgA2L+9XKYRd\nqetrJ+YXs+7cqxET1TE02jp9/YBTVoDbBBlExnoQ9Q6pFwDI9BLPVx04oald6T3X\nBcxdAkFdbLKtL0hquHPGp4GFi5POeILY6DU/Dys2Z5stTZaspG/Gq0SPLiTYCF51\nH2lfNsn3OQKBgHLUsIwhNTWS282/9vBejWTWt6eec0DlFqWZRhCvdF19q68CGP/a\nlN//+qXRD7I5VJ7Et+wRAzfshVbnAUM9h5080K+WXqo+JtLX5jOuRr1fvwtYuvk/\nEW3fghNsfuf44pWg24Bx0iaWkrJYLPY5yNK5M1ZqsVUdq04SS4WjMhqNAoGAdTjj\n56j6h0mxhHi3G9Fku2TOZmsXrfK3xRIlVUteahQaFdURoH5sMELJ8GwZXX/BfAhU\nUfX77B/FQGnpQk1cpyJ7uTht9zXGg+t7NV/nohe+qi8+kKjN2/TilnZRRxxe5g3i\nb+qmDTKTU8Cp7OrZ2g8y9zNMxeTDvb5nxkh6pwkCgYEAk69GSH/LTNgRa8dH8WOQ\n2BKE9jgPIWcQoHLCFRVP4uqGsVUAx5Jn4jGLID5Im63M7DOWjXl/1bzHoe/OvikI\nxdfEoz8kKoOhjHuQizVel5ZpM7mLtzuYcJbtRIjfgtPo9L1CZjErnGnubxRqsh7j\nVvUcQKjKhQ7oipzWwTVnnX0=\n-----END PRIVATE KEY-----\n",
+  "client_email": "cloud-vision@witt-231902.iam.gserviceaccount.com",
+  "client_id": "113419345187494780367",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/cloud-vision%40witt-231902.iam.gserviceaccount.com"
+}
