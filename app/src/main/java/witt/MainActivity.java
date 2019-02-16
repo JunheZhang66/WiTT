@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.PixelCopy;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.ar.core.Pose;
@@ -81,18 +82,24 @@ public class MainActivity extends AppCompatActivity {
                 .build()
                 .thenAccept(viewRenderable -> {
                     Vector3 forward = arScene().getCamera().getForward();
+                    Vector3 cameraPosition = arScene().getCamera().getWorldPosition();
+                    Vector3 position = Vector3.add(cameraPosition, forward);
                     Quaternion rotation = arScene().getCamera().getLocalRotation();
-                    float[] pos = {forward.x, forward.y, -0.25f};
-                    float[] rot = {rotation.x,rotation.y,rotation.z,rotation.w};
+                    float[] pos = {position.x, position.y, -0.25f};
+                    float[] rot = {rotation.x, rotation.y, rotation.z, rotation.w};
                     AnchorNode anchor = new AnchorNode(arFragment.getArSceneView().getSession().createAnchor(new Pose(pos, rot)));
                     Log.d("Touch Me", "hi");
                     Node node = new Node();
                     node.setRenderable(viewRenderable);
                     anchor.setParent(arScene());
                     node.setParent(anchor);
+
+                    node.getRenderable().
+                    Log.d("TEXT", (String) ((TextView) findViewById(R.id.planetInfoCard)).getText());
+
                 }).exceptionally(
                 throwable -> {
-                    Log.d("Touch Me", "oops");
+                    Log.d("Touch Me", "oops"+throwable.getMessage());
                     return null;
                 });
     }
