@@ -13,6 +13,7 @@ public class DynamoDbAPI {
         this.client = client;
     }
 
+
     public void createItem(String language, String text, String translation) {
         final SpanishDO spanishItem = new SpanishDO();
         spanishItem.setText(text);
@@ -26,13 +27,13 @@ public class DynamoDbAPI {
         }).start();
     }
 
-    public void readItem(String language, String text) {
+    public void getItem(String language, String text) {
         DynamoDBMapper d = this.client;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 SpanishDO spanishItem = d.load(SpanishDO.class, text);
-                Log.d("GOT ITEM", spanishItem.getTranslation());
+                Log.d("Found Item", spanishItem.getTranslation());
             }
         }).start();
     }

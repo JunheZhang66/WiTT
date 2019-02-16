@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         DynamoDbAPI dynamoDB = new DynamoDbAPI(dynamoClient);
-        //dynamoDB.createItem("English", "Apple", "AppleS");
-        dynamoDB.readItem("English", "Apple");
 
         setContentView(R.layout.activity_ux);
 
