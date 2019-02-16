@@ -3,6 +3,7 @@ package witt;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -89,5 +90,19 @@ public class MainActivity extends AppCompatActivity {
       return false;
     }
     return true;
+  }
+
+  private class TapTask extends AsyncTask<Object, Void, String[]> {
+
+      @Override
+      protected String[] doInBackground(Object... objects) {
+          //(pass in an object containing screenshot and coords)
+          //send image to vision
+          //    receive word (english)
+          //send word to translate or dynamodb
+          //    receive translated word(s)
+          //return word in lang1 and lang2
+          return new String[2];
+      }
   }
 }
