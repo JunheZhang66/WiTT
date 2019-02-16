@@ -29,6 +29,8 @@ import com.google.ar.sceneform.samples.hellosceneform.R;
 import com.google.ar.sceneform.ux.ArFragment;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -39,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private static final double MIN_OPENGL_VERSION = 3.0;
     private ArFragment arFragment;
 
-    boolean hasBox;
+    private Map<Integer, Node> nodeMap;
+    private int counter;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -51,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         if (!checkIsSupportedDeviceOrFinish(this)) {
             return;
         }
+
+        nodeMap = new HashMap<>();
 
         setContentView(R.layout.activity_ux);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
@@ -68,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
         float y = event.getY();
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            //takePhoto(x, y);
-            showBlackBox();
+            int nodeId = showBlackBox();
+            takePhoto(nodeId, x, y);
         }
         return super.dispatchTouchEvent(event);
     }
 
-    private void showBlackBox() {
+    private int showBlackBox() {
         Log.d("Touch Me", "Stop touching me dude");
 
         ViewRenderable.builder()
@@ -93,10 +98,28 @@ public class MainActivity extends AppCompatActivity {
                     node.setRenderable(viewRenderable);
                     anchor.setParent(arScene());
                     node.setParent(anchor);
+                    nodeMap.put(counter, node);
 
-                    node.getRenderable().
-                    Log.d("TEXT", (String) ((TextView) findViewById(R.id.planetInfoCard)).getText());
+                    Log.d("WTF", ""+nodeMap.keySet().size());
+                    counter++;
+                }).exceptionally(
+                throwable -> {
+                    Log.d("Touch Me", "oops"+throwable.getMessage());
+                    return null;
+                });
+        return counter-1;
+    }
 
+    private void updateNode(int id, String str1, String str2) {
+        Log.d("WTF2", id + "\t"+nodeMap.keySet().toString());
+
+        Node n = nodeMap.get(0);
+
+        ViewRenderable.builder()
+                .setView(this, R.layout.black)
+                .build()
+                .thenAccept(viewRenderable -> {
+                    n.setRenderable(viewRenderable);
                 }).exceptionally(
                 throwable -> {
                     Log.d("Touch Me", "oops"+throwable.getMessage());
@@ -109,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void takePhoto(float x, float y) {
+    private void takePhoto(int id, float x, float y) {
         ArSceneView view = arFragment.getArSceneView();
 
         // Create a bitmap the size of the scene view.
@@ -122,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         // Make the request to copy.
         PixelCopy.request(view, bitmap, (copyResult) -> {
             if (copyResult == PixelCopy.SUCCESS) {
-                TouchEvent te = generateTouchEvent(bitmap, x, y);
+                TouchEvent te = generateTouchEvent(id, bitmap, x, y);
                 new TapTask().execute(te);
             } else {
                 Toast toast = Toast.makeText(MainActivity.this,
@@ -133,11 +156,11 @@ public class MainActivity extends AppCompatActivity {
         }, new Handler(handlerThread.getLooper()));
     }
 
-    private TouchEvent generateTouchEvent(Bitmap bitmap, float x, float y) {
+    private TouchEvent generateTouchEvent(int id, Bitmap bitmap, float x, float y) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
         byte[] bitmapdata = bos.toByteArray();
-        return new TouchEvent(bitmapdata, arFragment.getArSceneView(), x, y);
+        return new TouchEvent(id, bitmapdata, arFragment.getArSceneView(), x, y);
     }
 
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
@@ -160,12 +183,25 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String[] doInBackground(TouchEvent... objects) {
             TouchEvent event = objects[0];
+            Log.d("sleep", "lol");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.d("sleep", "ok");
             //send image to vision
             //    receive word (english)
             //send word to translate or dynamodb
             //    receive translated word(s)
             //return word in lang1 and lang2
-            return new String[]{"string1", "string2"};
+            return new String[]{""+event.getId(),"string1", "string2"};
+        }
+
+        @Override
+        protected void onPostExecute(String[] out){
+            int id = Integer.parseInt(out[0]);
+            updateNode(id, out[1], out[2]);
         }
     }
 }
