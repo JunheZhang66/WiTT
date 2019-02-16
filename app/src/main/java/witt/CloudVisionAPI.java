@@ -7,6 +7,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.vision.v1.Vision;
 import com.google.api.services.vision.v1.VisionRequestInitializer;
 import com.google.api.services.vision.v1.model.AnnotateImageRequest;
+import com.google.api.services.vision.v1.model.AnnotateImageResponse;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
@@ -40,12 +41,12 @@ public class CloudVisionAPI {
         inputImage.setContent(imgStr);
 
         Feature desiredFeature = new Feature();
-        desiredFeature.setType("OBJECT_LOCALIZATION");
-        ArrayList<Feature> featureList = new ArrayList<>();
-        featureList.add(desiredFeature);
+        desiredFeature.setType("FACE_DETECTION");
+        desiredFeature.setMaxResults(1);
 
         AnnotateImageRequest request = new AnnotateImageRequest();
-        request.setFeatures(featureList);
+        request.setImage(inputImage);
+        request.setFeatures(Arrays.asList(desiredFeature));
 
         BatchAnnotateImagesRequest batchRequest =
                 new BatchAnnotateImagesRequest();
@@ -53,14 +54,26 @@ public class CloudVisionAPI {
         Log.d("vision", "requests");
         batchRequest.setRequests(Arrays.asList(request));
         try {
+
+            Log.d("vision", "hi?");
             BatchAnnotateImagesResponse batchResponse =
-                    vision.images().annotate(batchRequest).execute();
+                    vision.images().annotate(batchRequest).setDisableGZipContent(true).execute();
 
-            List<EntityAnnotation> labels = batchResponse.getResponses().get(0).getLabelAnnotations();
+            Log.d("vision", "hello!!");
+            if(batchResponse == null)
+                Log.d("vision", "wtf?");
+            List<AnnotateImageResponse> responses = batchResponse.getResponses();
+            if(responses == null)
+                Log.d("vision", "null?");
+            AnnotateImageResponse response = responses.get(0);
+            if(response == null)
+                Log.d("vision", "null???");
 
-            Log.d("vision", "gottem?");
-            Log.d("vision", ""+labels.size());
-            return labels.get(0).getDescription();
+            if(response.getFaceAnnotations() != null)
+                Log.d("vision", "gottem?");
+            else
+                Log.d("vision", "null??");
+            return response.getFaceAnnotations().toString();
         }catch( IOException e)
         {
             // TODO
