@@ -1,46 +1,28 @@
 package witt;
 
+import android.util.Log;
+
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.vision.v1.Vision;
 import com.google.api.services.vision.v1.VisionRequestInitializer;
-import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
-import com.google.api.services.vision.v1.model.Image;
-import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.AnnotateImageRequest;
+import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
+import com.google.api.services.vision.v1.model.Feature;
+import com.google.api.services.vision.v1.model.Image;
 
-//import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
-import com.google.api.services.vision.v1.Vision.Builder;
-//import com.google.api.client.googleapis.services.json.AbstractGoogleJsonClient.Builder;
-
-import com.google.cloud.vision.v1.AnnotateImageResponse;
-//import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
-//import com.google.cloud.vision.v1.EntityAnnotation;
-
-import com.google.cloud.vision.v1.Feature.Type;
-//import com.google.cloud.vision.v1.Image;
-import com.google.cloud.vision.v1.ImageAnnotatorClient;
-import com.google.protobuf.ByteString;
-
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CloudVisionAPI {
-    TouchEvent te;
-    public CloudVisionAPI(TouchEvent te)
-    {
-        this.te = te;
-    }
-    public String noteImage()
+
+    public String noteImage(TouchEvent te)
     {
         Vision.Builder visionBuilder = new Vision.Builder(
                 new NetHttpTransport(),
@@ -53,18 +35,22 @@ public class CloudVisionAPI {
         byte[] photoData = te.getImage();
 
         Image inputImage = new Image();
-        inputImage.encodeContent(photoData);
+        //inputImage.encodeContent(photoData);
+        String imgStr = new String(Base64.encodeBase64(photoData));
+        inputImage.setContent(imgStr);
 
         Feature desiredFeature = new Feature();
-        desiredFeature.setType("LABEL_DETECTION");
+        desiredFeature.setType("OBJECT_LOCALIZATION");
+        ArrayList<Feature> featureList = new ArrayList<>();
+        featureList.add(desiredFeature);
 
         AnnotateImageRequest request = new AnnotateImageRequest();
-        request.setImage(inputImage);
-        request.setFeatures(Arrays.asList(desiredFeature));
+        request.setFeatures(featureList);
 
         BatchAnnotateImagesRequest batchRequest =
                 new BatchAnnotateImagesRequest();
 
+        Log.d("vision", "requests");
         batchRequest.setRequests(Arrays.asList(request));
         try {
             BatchAnnotateImagesResponse batchResponse =
@@ -72,14 +58,15 @@ public class CloudVisionAPI {
 
             List<EntityAnnotation> labels = batchResponse.getResponses().get(0).getLabelAnnotations();
 
+            Log.d("vision", "gottem?");
+            Log.d("vision", ""+labels.size());
             return labels.get(0).getDescription();
         }catch( IOException e)
         {
             // TODO
-            return null;
+            Log.d("vision", "fuck..");
+            return e.getMessage();
         }
-
-
     }
 
 }
