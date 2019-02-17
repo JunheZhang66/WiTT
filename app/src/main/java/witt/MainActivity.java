@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        // Testing
         float x = event.getX();
         float y = event.getY();
 
@@ -99,30 +98,32 @@ public class MainActivity extends AppCompatActivity {
                     anchor.setParent(arScene());
                     node.setParent(anchor);
                     nodeMap.put(counter, node);
-
-                    Log.d("WTF", ""+nodeMap.keySet().size());
+                    Log.d("WTF", "" + nodeMap.keySet().size());
                     counter++;
                 }).exceptionally(
                 throwable -> {
-                    Log.d("Touch Me", "oops"+throwable.getMessage());
+                    Log.d("Touch Me", "oops" + throwable.getMessage());
                     return null;
                 });
-        return counter-1;
+        return counter;
     }
 
     private void updateNode(int id, String str1, String str2) {
-        Log.d("WTF2", id + "\t"+nodeMap.keySet().toString());
+        Log.d("WTF2", id + "\t" + nodeMap.keySet().toString());
 
-        Node n = nodeMap.get(0);
+        Node n = nodeMap.get(id);
+
+        String newStr = str1 + ", " + str2;
 
         ViewRenderable.builder()
-                .setView(this, R.layout.black)
+                .setView(this, R.layout.transparent)
                 .build()
                 .thenAccept(viewRenderable -> {
+                    ((TextView) viewRenderable.getView().findViewById(R.id.text)).setText(newStr);
                     n.setRenderable(viewRenderable);
                 }).exceptionally(
                 throwable -> {
-                    Log.d("Touch Me", "oops"+throwable.getMessage());
+                    Log.d("Touch Me", "oops" + throwable.getMessage());
                     return null;
                 });
     }
@@ -130,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
     private Scene arScene() {
         return arFragment.getArSceneView().getScene();
     }
-
 
     private void takePhoto(int id, float x, float y) {
         ArSceneView view = arFragment.getArSceneView();
@@ -195,11 +195,12 @@ public class MainActivity extends AppCompatActivity {
             //send word to translate or dynamodb
             //    receive translated word(s)
             //return word in lang1 and lang2
-            return new String[]{""+event.getId(),"string1", "string2"};
+            Log.d("Counter", String.valueOf(event.getId()));
+            return new String[]{String.valueOf(event.getId()), "string1", "string2"};
         }
 
         @Override
-        protected void onPostExecute(String[] out){
+        protected void onPostExecute(String[] out) {
             int id = Integer.parseInt(out[0]);
             updateNode(id, out[1], out[2]);
         }
