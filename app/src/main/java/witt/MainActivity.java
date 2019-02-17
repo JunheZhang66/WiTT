@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Spinner spinner1, spinner2;
     private String from = "English";
-    private String to = "Chinese";
+    private String to = "Chinese (中文)";
 
     private DynamoDBMapper dynamoClient;
 
@@ -265,17 +265,27 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String[] doInBackground(TouchEvent... objects) {
+            Log.d("fuck my life", from);
+            Log.d("fuck my life", to);
+            String lang1 = from;
+            String lang2 = to;
+
+            if(!lang1.equals("English"))
+                lang1 = lang1.substring(0, from.indexOf(" "));
+            if(!lang2.equals("English"))
+                lang2 = lang2.substring(0, to.indexOf(" "));
+
             TouchEvent event = objects[0];
             String out = vision.processImage(event);
-            String text1 = dynamoDB.getTranslation(from, out);
-            String text2 = dynamoDB.getTranslation(to, out);
+            String text1 = dynamoDB.getTranslation(lang1, out);
+            String text2 = dynamoDB.getTranslation(lang2, out);
             if(text1 == null) {
-                text1 = trans.translate(out, "en", trans.getCode(from));
-                dynamoDB.createTranslation(from, out, text1);
+                text1 = trans.translate(out, "en", trans.getCode(lang1));
+                dynamoDB.createTranslation(lang1, out, text1);
             }
             if(text2 == null) {
-                text2 = trans.translate(out, "en", trans.getCode(to));
-                dynamoDB.createTranslation(to, out, text2);
+                text2 = trans.translate(out, "en", trans.getCode(lang2));
+                dynamoDB.createTranslation(lang2, out, text2);
             }
             return new String[]{String.valueOf(event.getId()), text1, text2};
         }
