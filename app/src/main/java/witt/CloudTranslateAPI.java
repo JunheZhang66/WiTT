@@ -13,6 +13,8 @@ public class CloudTranslateAPI {
     private static SyncHttpClient client = new SyncHttpClient();
 
     public String translate(String text, String from, String to) {
+        if(from.equals(to))
+            return text;
         RequestParams rp = new RequestParams();
         rp.add("q", text);
         rp.add("source", from);
@@ -58,5 +60,18 @@ public class CloudTranslateAPI {
 
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
+    }
+
+    public String getCode(String lang) {
+        switch (lang) {
+            case "Chinese":
+                return "zh-CN";
+            case "Spanish":
+                return "es";
+            case "French":
+                return "fr";
+            default:
+                return "en";
+        }
     }
 }

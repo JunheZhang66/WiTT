@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private CloudVisionAPI vision;
     private CloudTranslateAPI trans;
 
-    private ModelRenderable andyRenderable;
     private Spinner spinner1, spinner2;
     private String from = "English";
     private String to = "Chinese";
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         staticAdapter2
                 .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        staticSpinner2.setAdapter(staticAdapter);
+        staticSpinner2.setAdapter(staticAdapter2);
 
         staticSpinner2.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -149,7 +148,8 @@ public class MainActivity extends AppCompatActivity {
                     //direction.y = position.y;
                     float[] pos = {position.x, position.y, -0.25f};
                     float[] rot = {rotation.x, rotation.y, rotation.z, rotation.w};
-                    AnchorNode anchor = new AnchorNode(arFragment.getArSceneView().getSession().createAnchor(new Pose(pos, rot)));
+                    AnchorNode anchor = new AnchorNode(arFragment.getArSceneView()
+                            .getSession().createAnchor(new Pose(pos, rot)));
                     //AnchorNode anchor = new AnchorNode();
                     //anchor.setWorldPosition(position);
                     //anchor.setLookDirection(direction);
@@ -244,9 +244,10 @@ public class MainActivity extends AppCompatActivity {
             TouchEvent event = objects[0];
             String out = vision.processImage(event);
             Log.d("TESTING", out);
-            String translated = trans.translate(out, "en", "es");
+            String text1 = trans.translate(out, "en", trans.getCode(from));
+            String text2 = trans.translate(out, "en", trans.getCode(to));
             Log.d("Counter", String.valueOf(event.getId()));
-            return new String[]{String.valueOf(event.getId()), out, translated};
+            return new String[]{String.valueOf(event.getId()), text1, text2};
         }
 
         @Override
