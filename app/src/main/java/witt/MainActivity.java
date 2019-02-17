@@ -15,7 +15,12 @@ import android.view.MotionEvent;
 import android.view.PixelCopy;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
@@ -48,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
     private CloudVisionAPI vision;
     private CloudTranslateAPI trans;
 
+    private ModelRenderable andyRenderable;
+    private Spinner spinner1, spinner2;
+    private String from = "English";
+    private String to = "Chinese";
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
     // CompletableFuture requires api level 24
@@ -65,6 +74,46 @@ public class MainActivity extends AppCompatActivity {
         nodeMap = new HashMap<>();
 
         setContentView(R.layout.activity_ux);
+        Spinner staticSpinner = findViewById(R.id.spinnerFrom);
+        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
+                .createFromResource(this, R.array.From,
+                        android.R.layout.simple_spinner_item);
+        staticAdapter
+                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        staticSpinner.setAdapter(staticAdapter);
+        staticSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                from = parent.getItemAtPosition(position).toString();
+
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
+        //second drop down
+        Spinner staticSpinner2 = findViewById(R.id.spinnerTo);
+        ArrayAdapter<CharSequence> staticAdapter2 = ArrayAdapter
+                .createFromResource(this, R.array.To,
+                        android.R.layout.simple_spinner_item);
+        staticAdapter2
+                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        staticSpinner2.setAdapter(staticAdapter);
+
+        staticSpinner2.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                to = parent.getItemAtPosition(position).toString();
+
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         if (arFragment != null) {
             arFragment.getPlaneDiscoveryController().hide();

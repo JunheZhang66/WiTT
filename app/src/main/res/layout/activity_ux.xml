@@ -23,5 +23,26 @@
       android:id="@+id/ux_fragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent" />
-
+  <Spinner
+      android:id="@+id/spinnerFrom"
+      android:spinnerMode="dropdown"
+      android:background="@android:drawable/btn_dropdown"
+      android:layout_width="150dp"
+      android:layout_marginTop="680dp"
+      android:layout_height="wrap_content"></Spinner>
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="690dp"
+      android:layout_marginLeft="190dp"
+      android:text="------->"
+      />
+  <Spinner
+      android:id="@+id/spinnerTo"
+      android:spinnerMode="dropdown"
+      android:background="@android:drawable/btn_dropdown"
+      android:layout_width="150dp"
+      android:layout_marginLeft="260dp"
+      android:layout_marginTop="680dp"
+      android:layout_height="wrap_content"></Spinner>
 </FrameLayout>

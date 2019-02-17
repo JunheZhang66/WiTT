@@ -16,5 +16,16 @@
 -->
 <resources>
     <string name="app_name">Hello Sceneform</string>
-    <string name="API_KEY">AIzaSyB6Q-qwrvS_nVXSde8X6WCBcQl9uM4Y8TQ</string>
+    <string-array name="From">
+        <item>English</item>
+        <item>Chinese</item>
+        <item>French</item>
+        <item>Spanish</item>
+    </string-array>
+    <string-array name="To">
+        <item>Chinese</item>
+        <item>English</item>
+        <item>French</item>
+        <item>Spanish</item>
+    </string-array>
 </resources>
