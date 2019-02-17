@@ -50,6 +50,10 @@ android {
     }
 }
 
+repositories{
+    mavenCentral()
+}
+
 dependencies {
     // Provides ArFragment, and other Sceneform UX resources:
     implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.7.0'
@@ -59,9 +63,11 @@ dependencies {
     //implementation "com.google.ar.sceneform:core:1.7.0"
     implementation 'com.android.support:appcompat-v7:28.0.0'
     compile 'com.google.api-client:google-api-client-android:1.22.0'
-    compile 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0'
+    implementation  'com.android.support:design:28.0.0'
+    compile 'com.google.apis:google-api-services-vision:v1-rev415-1.25.0'
     compile 'com.google.code.findbugs:jsr305:3.0.2'
     compile 'com.loopj.android:android-async-http:1.4.9'
+    compile group: 'commons-io', name: 'commons-io', version: '2.0.1'
 }
 
 apply plugin: 'com.google.ar.sceneform.plugin'

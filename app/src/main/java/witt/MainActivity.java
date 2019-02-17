@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
 
+    private CloudVisionAPI vision;
+
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
     // CompletableFuture requires api level 24
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         }
         arFragment.getArSceneView().getPlaneRenderer().setEnabled(false);
 
+        vision = new CloudVisionAPI();
+
         // When you build a Renderable, Sceneform loads its resources in the background while returning
         // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
         ModelRenderable.builder()
@@ -73,23 +77,23 @@ public class MainActivity extends AppCompatActivity {
                             return null;
                         });
 
-        arFragment.setOnTapArPlaneListener(
-                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (andyRenderable == null) {
-                        return;
-                    }
-
-                    // Create the Anchor.
-                    Anchor anchor = hitResult.createAnchor();
-                    AnchorNode anchorNode = new AnchorNode(anchor);
-                    anchorNode.setParent(arFragment.getArSceneView().getScene());
-
-                    // Create the transformable andy and add it to the anchor.
-                    TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
-                    andy.setParent(anchorNode);
-                    andy.setRenderable(andyRenderable);
-                    andy.select();
-                });
+//        arFragment.setOnTapArPlaneListener(
+//                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
+//                    if (andyRenderable == null) {
+//                        return;
+//                    }
+//
+//                    // Create the Anchor.
+//                    Anchor anchor = hitResult.createAnchor();
+//                    AnchorNode anchorNode = new AnchorNode(anchor);
+//                    anchorNode.setParent(arFragment.getArSceneView().getScene());
+//
+//                    // Create the transformable andy and add it to the anchor.
+//                    TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
+//                    andy.setParent(anchorNode);
+//                    andy.setRenderable(andyRenderable);
+//                    andy.select();
+//                });
     }
 
     @Override
@@ -128,10 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private TouchEvent generateTouchEvent(Bitmap bitmap, float x, float y) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-        byte[] bitmapdata = bos.toByteArray();
-        return new TouchEvent(bitmapdata, arFragment.getArSceneView(), x, y);
+        return new TouchEvent(bitmap, x, y, 1080, 1920);
     }
 
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
@@ -154,6 +155,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String[] doInBackground(TouchEvent... objects) {
             TouchEvent event = objects[0];
+            Log.d("vision!", "hello");
+            String out = vision.processImage(event);
+            Log.d("vision!", out);
             //send image to vision
             //    receive word (english)
             //send word to translate or dynamodb
