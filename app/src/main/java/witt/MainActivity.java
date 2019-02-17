@@ -24,6 +24,8 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.samples.hellosceneform.R;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
 
 import java.io.ByteArrayOutputStream;
 

@@ -1,44 +1,61 @@
 package witt;
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.Translate.TranslateOption;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
-import com.google.cloud.translate.Detection;
-import java.util.LinkedList;
+
+import android.util.Log;
+
+import com.loopj.android.http.*;
+import org.json.*;
+
+import cz.msebera.android.httpclient.Header;
+
 public class CloudTranslateAPI {
-    private static final String [] LANGUAGES ={
-            "af", "sq", "ar", "hy", "az", "eu", "be", "bn", "bs", "bg", "ca", "ceb",
-            "ny", "zh-TW", "hr", "cs", "da", "nl", "en", "eo", "et", "tl", "fi", "fr",
-            "gl", "ka", "de", "el", "gu", "ht", "ha", "iw","hi", "hmn", "hu", "is",
-            "ig", "id", "ga", "it", "ja", "jw", "kn", "kk", "km", "ko", "lo",
-            "la", "lv", "lt", "mk", "mg", "ms", "ml","mt", "mi", "mr", "mn", "my", "ne", "no",
-            "fa", "pl", "pt", "ro", "ru", "sr", "st", "si", "sk", "sl", "so", "es", "su",
-            "sw", "sv", "tg", "ta", "te", "th", "tr", "uk", "ur", "uz", "vi", "cy", "yi", "yo", "zu"
-    };
+    private static final String BASE_URL = "https://translation.googleapis.com/";
 
-    //googleapis git hub
-    Translate trans = TranslateOptions.getDefaultInstance().getService();
-    List <Language> languages = trans.listSupportedLanguages();
-    Set<String> supportedLanguages = new HashSet<>();
-    for(Language language : languages){
-        supportedLanguages.add(language.getCode());
-        assertNotNull(Language.getName());
-    }
-    for(String code : LANGUAGES){
-        assertTrue(supportedLanguages.contains(code));
+    private static AsyncHttpClient client = new AsyncHttpClient();
+
+    public String translate(String text, String from, String to) {
+        RequestParams rp = new RequestParams();
+        rp.add("q", text);
+        rp.add("source", from);
+        rp.add("target", to);
+        rp.add("key", "AIzaSyBj9LPGWoQyGa7JurS6gfTA4wIW4YcN6JM");
+
+        String out = "";
+
+        post("language/translate/v2", rp, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                JSONObject data = null;
+                try {
+                    data = response.getJSONObject("data");
+                    Log.d("translate", data.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
+                //nothing
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable a, JSONObject response) {
+                Log.d("translate", a.getMessage());
+                Log.d("translate", response.toString());
+            }
+        });
+        return out;
     }
 
-
-    public static String translate(String lang1, String lang2, String text){
-        List<String> texts = new LinkedList<>();
-        texts.add(lang1);
-        texts.add(lang2)
-        Translation translation = trans.translate(text, TranslateOption.sourceLanguage(texts.get(0).getCode()),TranslateOption.targetLanguage(texts.get(1).getCode()));
-        String fin = translation.getTranslatedText();
-        return fin;
+    public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.get(getAbsoluteUrl(url), params, responseHandler);
     }
-    public String translate(String language, String text){
-        String last = translate("English",language,text);
-        return last;
+
+    public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.post(getAbsoluteUrl(url), params, responseHandler);
+    }
+
+    private static String getAbsoluteUrl(String relativeUrl) {
+        return BASE_URL + relativeUrl;
     }
 }

@@ -51,22 +51,17 @@ android {
 }
 
 dependencies {
-
     // Provides ArFragment, and other Sceneform UX resources:
-    implementation "com.google.ar.sceneform.ux:sceneform-ux:1.7.0"
-
+    implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.7.0'
     // Use the Sceneform UX Package built from the source files included in the sceneformux folder.
     //api project(":sceneformux")
-
     // Alternatively, use ArSceneView without the UX dependency.
     //implementation "com.google.ar.sceneform:core:1.7.0"
-
-    implementation "com.android.support:appcompat-v7:28.0.0"
-    implementation 'com.google.api-client:google-api-client-android:1.22.0'
-    implementation 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0'
-    implementation  'com.android.support:design:28.0.0'
-    implementation 'com.google.code.findbugs:jsr305:2.0.1'
-    implementation 'com.google.cloud:google-cloud-translate:1.59.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    compile 'com.google.api-client:google-api-client-android:1.22.0'
+    compile 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    compile 'com.loopj.android:android-async-http:1.4.9'
 }
 
 apply plugin: 'com.google.ar.sceneform.plugin'
@@ -75,4 +70,3 @@ sceneform.asset('sampledata/models/andy.obj',
         'default',
         'sampledata/models/andy.sfa',
         'src/main/res/raw/andy')
-
