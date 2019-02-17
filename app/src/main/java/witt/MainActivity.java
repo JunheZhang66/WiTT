@@ -13,21 +13,25 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.PixelCopy;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.ar.core.Anchor;
-import com.google.ar.core.HitResult;
-import com.google.ar.core.Plane;
+import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.ArSceneView;
-import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.math.Quaternion;
+import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.samples.hellosceneform.R;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.TranslateOptions;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -37,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
     private ArFragment arFragment;
-    private ModelRenderable andyRenderable;
+
+    private Map<Integer, Node> nodeMap;
+    private int counter;
 
     private CloudVisionAPI vision;
 
@@ -52,48 +58,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        nodeMap = new HashMap<>();
+
         setContentView(R.layout.activity_ux);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         if (arFragment != null) {
             arFragment.getPlaneDiscoveryController().hide();
             arFragment.getPlaneDiscoveryController().setInstructionView(null);
+            arFragment.getArSceneView().getPlaneRenderer().setEnabled(false);
         }
-        arFragment.getArSceneView().getPlaneRenderer().setEnabled(false);
-
-        vision = new CloudVisionAPI();
-
-        // When you build a Renderable, Sceneform loads its resources in the background while returning
-        // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
-        ModelRenderable.builder()
-                .setSource(this, R.raw.andy)
-                .build()
-                .thenAccept(renderable -> andyRenderable = renderable)
-                .exceptionally(
-                        throwable -> {
-                            Toast toast =
-                                    Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.show();
-                            return null;
-                        });
-
-//        arFragment.setOnTapArPlaneListener(
-//                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-//                    if (andyRenderable == null) {
-//                        return;
-//                    }
-//
-//                    // Create the Anchor.
-//                    Anchor anchor = hitResult.createAnchor();
-//                    AnchorNode anchorNode = new AnchorNode(anchor);
-//                    anchorNode.setParent(arFragment.getArSceneView().getScene());
-//
-//                    // Create the transformable andy and add it to the anchor.
-//                    TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
-//                    andy.setParent(anchorNode);
-//                    andy.setRenderable(andyRenderable);
-//                    andy.select();
-//                });
     }
 
     @Override
@@ -102,12 +75,73 @@ public class MainActivity extends AppCompatActivity {
         float y = event.getY();
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            takePhoto(x, y);
+            int nodeId = showBlackBox();
+            takePhoto(nodeId, x, y);
         }
         return super.dispatchTouchEvent(event);
     }
 
-    private void takePhoto(float x, float y) {
+    private int showBlackBox() {
+        Log.d("Touch Me", "Stop touching me dude");
+
+        ViewRenderable.builder()
+                .setView(this, R.layout.text)
+                .build()
+                .thenAccept(viewRenderable -> {
+                    Vector3 forward = arScene().getCamera().getForward();
+                    Vector3 cameraPosition = arScene().getCamera().getWorldPosition();
+                    Vector3 position = Vector3.add(cameraPosition, forward);
+                    Quaternion rotation = arScene().getCamera().getLocalRotation();
+                    //Vector3 direction = Vector3.subtract(cameraPosition, forward);
+                    //direction.y = position.y;
+                    float[] pos = {position.x, position.y, -0.25f};
+                    float[] rot = {rotation.x, rotation.y, rotation.z, rotation.w};
+                    AnchorNode anchor = new AnchorNode(arFragment.getArSceneView().getSession().createAnchor(new Pose(pos, rot)));
+                    //AnchorNode anchor = new AnchorNode();
+                    //anchor.setWorldPosition(position);
+                    //anchor.setLookDirection(direction);
+                    Log.d("Touch Me", "hi");
+                    Node node = new Node();
+                    node.setRenderable(viewRenderable);
+                    anchor.setParent(arScene());
+                    node.setParent(anchor);
+                    nodeMap.put(counter, node);
+                    Log.d("WTF", "" + nodeMap.keySet().size());
+                    counter++;
+                }).exceptionally(
+                throwable -> {
+                    Log.d("Touch Me", "oops" + throwable.getMessage());
+                    return null;
+                });
+        return counter;
+    }
+
+    private void updateNode(int id, String str1, String str2) {
+        Log.d("WTF2", id + "\t" + nodeMap.keySet().toString());
+
+        Node n = nodeMap.get(id);
+
+
+        String newStr = str1 + "\n" + str2;
+
+        ViewRenderable.builder()
+                .setView(this, R.layout.transparent)
+                .build()
+                .thenAccept(viewRenderable -> {
+                    ((TextView) viewRenderable.getView().findViewById(R.id.text)).setText(newStr);
+                    n.setRenderable(viewRenderable);
+                }).exceptionally(
+                throwable -> {
+                    Log.d("Touch Me", "oops" + throwable.getMessage());
+                    return null;
+                });
+    }
+
+    private Scene arScene() {
+        return arFragment.getArSceneView().getScene();
+    }
+
+    private void takePhoto(int id, float x, float y) {
         ArSceneView view = arFragment.getArSceneView();
 
         // Create a bitmap the size of the scene view.
@@ -120,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         // Make the request to copy.
         PixelCopy.request(view, bitmap, (copyResult) -> {
             if (copyResult == PixelCopy.SUCCESS) {
-                TouchEvent te = generateTouchEvent(bitmap, x, y);
+                TouchEvent te = generateTouchEvent(id, bitmap, x, y);
                 new TapTask().execute(te);
             } else {
                 Toast toast = Toast.makeText(MainActivity.this,
@@ -131,8 +165,11 @@ public class MainActivity extends AppCompatActivity {
         }, new Handler(handlerThread.getLooper()));
     }
 
-    private TouchEvent generateTouchEvent(Bitmap bitmap, float x, float y) {
-        return new TouchEvent(bitmap, x, y, 1080, 1920);
+    private TouchEvent generateTouchEvent(int id, Bitmap bitmap, float x, float y) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+        byte[] bitmapdata = bos.toByteArray();
+        return new TouchEvent(id, bitmapdata, arFragment.getArSceneView(), x, y);
     }
 
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
@@ -163,7 +200,14 @@ public class MainActivity extends AppCompatActivity {
             //send word to translate or dynamodb
             //    receive translated word(s)
             //return word in lang1 and lang2
-            return new String[]{"string1", "string2"};
+            Log.d("Counter", String.valueOf(event.getId()));
+            return new String[]{String.valueOf(event.getId()), "Blue Face Baby", "Thotiana"};
+        }
+
+        @Override
+        protected void onPostExecute(String[] out) {
+            int id = Integer.parseInt(out[0]);
+            updateNode(id, out[1], out[2]);
         }
     }
 }
