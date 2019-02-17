@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
         float x = event.getX();
         float y = event.getY();
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN && y < 1920 - 150) {
             int nodeId = showBlackBox();
             takePhoto(nodeId, x, y);
         }
