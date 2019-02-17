@@ -6,15 +6,14 @@ import com.google.ar.sceneform.ArSceneView;
 
 public class TouchEvent {
 
-    private int id
+    private int id;
     private Bitmap image;
-    private ArSceneView view;
     private float x;
     private float y;
     private float screenX;
     private float screenY;
 
-    public TouchEvent(int id, Bitmap image, ArSceneView view, float x, float y) {
+    public TouchEvent(int id, Bitmap image, float screenX, float screenY, float x, float y) {
         this.id = id;
         this.image = image;
         this.screenX = screenX;

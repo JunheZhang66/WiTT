@@ -11,6 +11,7 @@ import com.google.api.services.vision.v1.model.AnnotateImageRequest;
 import com.google.api.services.vision.v1.model.AnnotateImageResponse;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
+import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 
@@ -23,8 +24,6 @@ import java.util.List;
 
 public class CloudVisionAPI {
 
-    private static final float maxWidth = 300f;
-    private static final float maxHeight = 300f;
     Vision vision;
 
     public CloudVisionAPI() {
@@ -68,7 +67,8 @@ public class CloudVisionAPI {
             Log.d("vision", "hello!!");
             List<AnnotateImageResponse> responses = batchResponse.getResponses();
             AnnotateImageResponse response = responses.get(0);
-            return response.getLabelAnnotations().toString();
+            EntityAnnotation label = response.getLabelAnnotations().get(0);
+            return label.getDescription();
         } catch(IOException e) {
             // TODO
             return e.getMessage();

@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private int counter;
 
     private CloudVisionAPI vision;
+    private CloudTranslateAPI trans;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
         if (!checkIsSupportedDeviceOrFinish(this)) {
             return;
         }
+
+        vision = new CloudVisionAPI();
+        trans = new CloudTranslateAPI();
 
         nodeMap = new HashMap<>();
 
@@ -166,10 +170,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private TouchEvent generateTouchEvent(int id, Bitmap bitmap, float x, float y) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-        byte[] bitmapdata = bos.toByteArray();
-        return new TouchEvent(id, bitmapdata, arFragment.getArSceneView(), x, y);
+        return new TouchEvent(id, bitmap, 1080, 1920, x, y);
     }
 
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
@@ -192,16 +193,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String[] doInBackground(TouchEvent... objects) {
             TouchEvent event = objects[0];
-            Log.d("vision!", "hello");
             String out = vision.processImage(event);
-            Log.d("vision!", out);
-            //send image to vision
-            //    receive word (english)
-            //send word to translate or dynamodb
-            //    receive translated word(s)
-            //return word in lang1 and lang2
+            Log.d("TESTING", out);
+            String translated = trans.translate(out, "en", "es");
             Log.d("Counter", String.valueOf(event.getId()));
-            return new String[]{String.valueOf(event.getId()), "Blue Face Baby", "Thotiana"};
+            return new String[]{String.valueOf(event.getId()), out, translated};
         }
 
         @Override

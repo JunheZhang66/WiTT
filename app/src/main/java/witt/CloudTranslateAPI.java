@@ -10,7 +10,7 @@ import cz.msebera.android.httpclient.Header;
 public class CloudTranslateAPI {
     private static final String BASE_URL = "https://translation.googleapis.com/";
 
-    private static AsyncHttpClient client = new AsyncHttpClient();
+    private static SyncHttpClient client = new SyncHttpClient();
 
     public String translate(String text, String from, String to) {
         RequestParams rp = new RequestParams();
@@ -19,32 +19,33 @@ public class CloudTranslateAPI {
         rp.add("target", to);
         rp.add("key", "AIzaSyBj9LPGWoQyGa7JurS6gfTA4wIW4YcN6JM");
 
-        String out = "";
+        String[] out = new String[1];
 
-        post("language/translate/v2", rp, new JsonHttpResponseHandler() {
+        post("language/translate/v2", rp, new AsyncHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] bytes) {
                 JSONObject data = null;
                 try {
+                    JSONObject response = new JSONObject(new String(bytes));
                     data = response.getJSONObject("data");
-                    Log.d("translate", data.toString());
+                    JSONArray translations = data.getJSONArray("translations");
+                    JSONObject translation = (JSONObject) translations.get(0);
+                    String translatedText = translation.getString("translatedText");
+                    Log.d("translate", translatedText);
+                    out[0] = translatedText;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
-                //nothing
-            }
+            public void onFailure(int statusCode, Header[] headers, byte[] bytes, Throwable a) {
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable a, JSONObject response) {
                 Log.d("translate", a.getMessage());
-                Log.d("translate", response.toString());
+                //Log.d("translate", response.toString());
             }
         });
-        return out;
+        return out[0];
     }
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
