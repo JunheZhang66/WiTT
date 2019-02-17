@@ -45,6 +45,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
+
     private ArFragment arFragment;
 
     private Map<Integer, Node> nodeMap;
@@ -56,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spinner1, spinner2;
     private String from = "English";
     private String to = "Chinese";
+
+    private DynamoDBMapper dynamoClient;
+
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
     // CompletableFuture requires api level 24
