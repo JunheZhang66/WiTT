@@ -63,6 +63,7 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:3.0.2'
     compile 'com.google.cloud:google-cloud-translate:1.62.0'
     compile files('libs/google-api-translate-java-0.97')
+    compile 'com.loopj.android:android-async-http:1.4.9'
 }
 
 apply plugin: 'com.google.ar.sceneform.plugin'

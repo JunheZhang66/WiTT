@@ -47,9 +47,10 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_ux);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
-        translate = new CloudTranslateAPI();
-        new loadServices().execute(translate);
         //System.out.println(ct.translate("English", "Spanish", "Friend"));
+
+        CloudTranslateAPI trans = new CloudTranslateAPI();
+        trans.translate("apple", "en", "es");
 
         // When you build a Renderable, Sceneform loads its resources in the background while returning
         // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
@@ -66,23 +67,23 @@ public class MainActivity extends AppCompatActivity {
                             return null;
                         });
 
-        arFragment.setOnTapArPlaneListener(
-                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (andyRenderable == null) {
-                        return;
-                    }
-
-                    // Create the Anchor.
-                    Anchor anchor = hitResult.createAnchor();
-                    AnchorNode anchorNode = new AnchorNode(anchor);
-                    anchorNode.setParent(arFragment.getArSceneView().getScene());
-
-                    // Create the transformable andy and add it to the anchor.
-                    TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
-                    andy.setParent(anchorNode);
-                    andy.setRenderable(andyRenderable);
-                    andy.select();
-                });
+//        arFragment.setOnTapArPlaneListener(
+//                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
+//                    if (andyRenderable == null) {
+//                        return;
+//                    }
+//
+//                    // Create the Anchor.
+//                    Anchor anchor = hitResult.createAnchor();
+//                    AnchorNode anchorNode = new AnchorNode(anchor);
+//                    anchorNode.setParent(arFragment.getArSceneView().getScene());
+//
+//                    // Create the transformable andy and add it to the anchor.
+//                    TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
+//                    andy.setParent(anchorNode);
+//                    andy.setRenderable(andyRenderable);
+//                    andy.select();
+//                });
     }
 
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
@@ -98,15 +99,5 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         return true;
-    }
-
-    private class loadServices extends AsyncTask<CloudTranslateAPI, Void, Void> {
-
-        @Override
-        protected Void doInBackground(CloudTranslateAPI... v) {
-            CloudTranslateAPI c = v[0];
-            c.setTranslateObject();
-            return null;
-        }
     }
 }
