@@ -75,16 +75,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //second drop down
-        Spinner dynamicSpinner = (Spinner) findViewById(R.id.spinnerTo);
+        Spinner staticSpinner2 = findViewById(R.id.spinnerTo);
+        ArrayAdapter<CharSequence> staticAdapter2 = ArrayAdapter
+                .createFromResource(this, R.array.To,
+                        android.R.layout.simple_spinner_item);
+        staticAdapter2
+                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        String[] items = new String[] { "Chinese", "French", "English" };
+        staticSpinner2.setAdapter(staticAdapter);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, items);
-
-        dynamicSpinner.setAdapter(adapter);
-
-        dynamicSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        staticSpinner2.setOnItemSelectedListener(new OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
