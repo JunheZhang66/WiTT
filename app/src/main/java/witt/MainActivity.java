@@ -22,6 +22,11 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
@@ -53,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private CloudVisionAPI vision;
     private CloudTranslateAPI trans;
+    private DynamoDbAPI dynamoDB;
 
     private Spinner spinner1, spinner2;
     private String from = "English";
@@ -70,6 +76,20 @@ public class MainActivity extends AppCompatActivity {
         if (!checkIsSupportedDeviceOrFinish(this)) {
             return;
         }
+
+        AWSMobileClient.getInstance().initialize(this).execute();
+
+        AWSCredentialsProvider credentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
+        AWSConfiguration configuration = AWSMobileClient.getInstance().getConfiguration();
+
+        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(credentialsProvider);
+
+        dynamoClient = DynamoDBMapper.builder()
+                .dynamoDBClient(dynamoDBClient)
+                .awsConfiguration(configuration)
+                .build();
+
+        dynamoDB = new DynamoDbAPI(dynamoClient);
 
         vision = new CloudVisionAPI();
         trans = new CloudTranslateAPI();
@@ -247,10 +267,16 @@ public class MainActivity extends AppCompatActivity {
         protected String[] doInBackground(TouchEvent... objects) {
             TouchEvent event = objects[0];
             String out = vision.processImage(event);
-            Log.d("TESTING", out);
-            String text1 = trans.translate(out, "en", trans.getCode(from));
-            String text2 = trans.translate(out, "en", trans.getCode(to));
-            Log.d("Counter", String.valueOf(event.getId()));
+            String text1 = dynamoDB.getTranslation(from, out);
+            String text2 = dynamoDB.getTranslation(to, out);
+            if(text1 == null) {
+                text1 = trans.translate(out, "en", trans.getCode(from));
+                dynamoDB.createTranslation(from, out, text1);
+            }
+            if(text2 == null) {
+                text2 = trans.translate(out, "en", trans.getCode(to));
+                dynamoDB.createTranslation(to, out, text2);
+            }
             return new String[]{String.valueOf(event.getId()), text1, text2};
         }
 
