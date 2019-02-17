@@ -89,9 +89,14 @@ public class MainActivity extends AppCompatActivity {
                     Vector3 cameraPosition = arScene().getCamera().getWorldPosition();
                     Vector3 position = Vector3.add(cameraPosition, forward);
                     Quaternion rotation = arScene().getCamera().getLocalRotation();
+                    //Vector3 direction = Vector3.subtract(cameraPosition, forward);
+                    //direction.y = position.y;
                     float[] pos = {position.x, position.y, -0.25f};
                     float[] rot = {rotation.x, rotation.y, rotation.z, rotation.w};
                     AnchorNode anchor = new AnchorNode(arFragment.getArSceneView().getSession().createAnchor(new Pose(pos, rot)));
+                    //AnchorNode anchor = new AnchorNode();
+                    //anchor.setWorldPosition(position);
+                    //anchor.setLookDirection(direction);
                     Log.d("Touch Me", "hi");
                     Node node = new Node();
                     node.setRenderable(viewRenderable);
@@ -113,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
         Node n = nodeMap.get(id);
 
-        String newStr = str1 + ", " + str2;
+
+        String newStr = str1 + "\n" + str2;
 
         ViewRenderable.builder()
                 .setView(this, R.layout.transparent)
@@ -183,20 +189,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String[] doInBackground(TouchEvent... objects) {
             TouchEvent event = objects[0];
-            Log.d("sleep", "lol");
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Log.d("sleep", "ok");
             //send image to vision
             //    receive word (english)
             //send word to translate or dynamodb
             //    receive translated word(s)
             //return word in lang1 and lang2
             Log.d("Counter", String.valueOf(event.getId()));
-            return new String[]{String.valueOf(event.getId()), "string1", "string2"};
+            return new String[]{String.valueOf(event.getId()), "Blue Face Baby", "Thotiana"};
         }
 
         @Override
