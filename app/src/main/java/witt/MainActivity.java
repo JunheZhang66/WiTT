@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         PixelCopy.request(view, bitmap, (copyResult) -> {
             if (copyResult == PixelCopy.SUCCESS) {
                 TouchEvent te = generateTouchEvent(id, bitmap, x, y);
-                new TapTask().execute(te);
+                new TapTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, te);
             } else {
                 Toast toast = Toast.makeText(MainActivity.this,
                         "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG);

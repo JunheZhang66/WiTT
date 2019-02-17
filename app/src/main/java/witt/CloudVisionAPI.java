@@ -89,8 +89,8 @@ public class CloudVisionAPI {
         int startY = Math.round(y - halfHeight);
 
         Bitmap modified = Bitmap.createBitmap(orig, startX, startY,
-                Math.min(Math.round(halfWidth*2), orig.getWidth()),
-                Math.min(Math.round(halfHeight*2), orig.getHeight()));
+                Math.min(Math.round(halfWidth*2), orig.getWidth()-startX),
+                Math.min(Math.round(halfHeight*2), orig.getHeight()-startY));
         return Bitmap.createScaledBitmap(modified, 300, 300, false);
     }
 

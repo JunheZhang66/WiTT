@@ -15,7 +15,7 @@
    limitations under the License.
 -->
 <resources>
-    <string name="app_name">Hello Sceneform</string>
+    <string name="app_name">WiTT</string>
     <string-array name="From">
         <item>English</item>
         <item>Chinese</item>
