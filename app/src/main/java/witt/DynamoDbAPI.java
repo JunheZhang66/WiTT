@@ -1,8 +1,6 @@
 package witt;
 
 
-import android.util.Log;
-
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 
 public class DynamoDbAPI {
@@ -14,27 +12,57 @@ public class DynamoDbAPI {
     }
 
 
-    public void createItem(String language, String text, String translation) {
-        final SpanishDO spanishItem = new SpanishDO();
-        spanishItem.setText(text);
-        spanishItem.setTranslation(translation);
+    public void createTranslation(String language, String text, String translation) {
+        if (language.equals("English"))
+            return;
+        LanguageDO langItem = null;
+        switch (language) {
+            case "Spanish":
+                langItem = new SpanishDO();
+                break;
+            case "Chinese":
+                langItem = new ChineseDO();
+                break;
+            case "French":
+                langItem = new FrenchDO();
+                break;
+        }
+        langItem.setText(text);
+        langItem.setTranslation(translation);
         DynamoDBMapper d = this.client;
+        LanguageDO finalLangItem = langItem;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                d.save(spanishItem);
+                d.save(finalLangItem);
             }
         }).start();
     }
 
-    public void getItem(String language, String text) {
+    public String getTranslation(String language, String text) {
+        if (language.equals("English")) {
+            return text;
+        }
+        LanguageDO langItem = null;
+        switch (language) {
+            case "Spanish":
+                langItem = new SpanishDO();
+                break;
+            case "Chinese":
+                langItem = new ChineseDO();
+                break;
+            case "French":
+                langItem = new FrenchDO();
+                break;
+        }
         DynamoDBMapper d = this.client;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SpanishDO spanishItem = d.load(SpanishDO.class, text);
-                Log.d("Found Item", spanishItem.getTranslation());
-            }
-        }).start();
+        LanguageDO returnItem = d.load(langItem.getClass(), text);
+
+        if (returnItem == null) {
+            return null;
+        } else {
+            return returnItem.getTranslation();
+        }
     }
+
 }
