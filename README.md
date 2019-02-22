@@ -1,4 +1,4 @@
-![](\app\src\main\res\drawable-xxhdpi\logo2.png)
+![](/app/src/main/res/drawable-xxhdpi/logo2.png)
 
 What is This Thing?
 ==================
